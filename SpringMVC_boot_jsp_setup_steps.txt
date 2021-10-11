@@ -1,0 +1,106 @@
+===================
+// Here are steps for NOT externalizing the prefix/suffix jsp properties. This
+// is NOT recommended, as you are hardcoding the full jsp path in the controller
+
+// Here is what normally needs to be added to application.properties for
+// Spring MVC boot app to work with JSP
+// reminder: need to create a src/main/webapp src folder in boot app
+// then add the "jsp" folder structure under it. Note below I have
+// commented out the view-related properties in application.properties, since I'm //just hardcoding the the view path in the controller("/jsp/display.jsp"). This is //not best practice, however, and you should use the view-related properties in //application.properties to externalize the prefix/suffix
+// (e.g., "spring.mvc.view.prefix=/jsp/" and "spring.mvc.view.suffix=.jsp" ) 
+---------------------
+step (1)
+application.properties file
+
+// note: the "#" before a line comments/disables that line
+// here we comment out the prefix/suffix properties, since we are hardcoding them
+
+#spring.main.web-application-type=none
+server.port=9000
+#spring.mvc.view.prefix=/WEB-INF/jsp/
+#spring.mvc.view.prefix=/jsp/
+#spring.mvc.view.suffix=.jsp
+---
+step (2)
+pom.xml
+
+// Boot needs this dependency to work with JSPs
+<dependency>
+	<groupId>org.apache.tomcat.embed</groupId>
+	<artifactId>tomcat-embed-jasper</artifactId>
+	<scope>provided</scope>
+</dependency>
+
+// make sure you also have this web starter dependency in pom.xml. You can add
+// this with the Spring Initializer site(https://start.spring.io/) that creates your // Spring Boot pom.xml
+
+<dependency>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+---
+step (3)
+src/main/resources/static/index.html
+
+// add the line below to index.html, a file you create and which is located in // src/main/resources/static folder
+// note: putting an "index" html/jsp file in the static folder means
+// Boot will automatically use that as your "home page" 
+
+Click <a href="api/display">here </a>  to show display. 
+-----------------
+step (4)
+DisplayController.java
+
+// this works even without setting spring.mvc.view.prefix in application.properties
+// reminder: still need to add the tomcat-embed-jasper depenency in boot pom.xml
+// (see above dependency snippet)
+@Controller
+@RequestMapping("api")
+public class DisplayController {
+
+	@GetMapping("/display")
+	public String showDisplay() {
+		return "/jsp/display.jsp"; // this works with no prefix/suffix settings in application.properties
+	}
+}
+
+-------------
+step (5)
+// create a display.jsp page under src/main/webapp/jsp folder
+src/main/webapp/jsp/display.jsp
+
+=======================================
+// To do the same thing as above but externalize the prefix/suffix for the jsp
+// you only need to do two things: 
+// (#1) add the prefix/suffix properties in application.properties
+// (#2) only return the simple string - "display" -  in your controller
+
+-----------------------------
+step (1): (note: to comment out a line in properties file, add "#" before line)
+
+#spring.main.web-application-type=none
+server.port=9000
+#spring.mvc.view.prefix=/WEB-INF/jsp/
+spring.mvc.view.prefix=/jsp/
+spring.mvc.view.suffix=.jsp
+---------------------------------
+step (2):
+// DisplayController.java
+
+@Controller
+@RequestMapping("api")
+public class DisplayController {
+
+	@GetMapping("/display")
+	public String showDisplay() {
+		//return "/jsp/display.jsp"; // this works with no additional settings in application.properties
+		
+		// below works only if you set spring.mvc.view.prefix/suffix properties in application.properties
+		return "display"; 
+	}
+}
+
+
+
+
+====
