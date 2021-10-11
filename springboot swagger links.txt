@@ -1,0 +1,3 @@
+https://www.tutorialspoint.com/spring_boot/spring_boot_enabling_swagger2.htm
+https://www.java-success.com/08-spring-boot-swagger-tutorial/
+https://tomjohnson1492.gitbooks.io/documenting-rest-apis/content/publishingapis/pubapis_swagger.html
